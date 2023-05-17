@@ -1,4 +1,4 @@
-import React, {memo, useCallback} from "react";
+import React, { memo, useCallback } from "react";
 import styled from "styled-components";
 
 const Col = styled.div`
@@ -18,14 +18,14 @@ const Col = styled.div`
     transform: translateX(-50%);
 
     ${(props) =>
-    props.$row === 0 &&
-    `
+      props.$row === 0 &&
+      `
       top: 50%;
     `}
 
     ${(props) =>
-    props.$row === 18 &&
-    `
+      props.$row === 18 &&
+      `
       height: 50%;
     `}
   }
@@ -41,14 +41,14 @@ const Col = styled.div`
     transform: translateY(-50%);
 
     ${(props) =>
-    props.$col === 0 &&
-    `
+      props.$col === 0 &&
+      `
       left: 50%;
     `}
 
     ${(props) =>
-    props.$col === 18 &&
-    `
+      props.$col === 18 &&
+      `
       width: 50%;
     `}
   }
@@ -66,15 +66,15 @@ const GomokuElement = styled.div`
   border-radius: 100%;
   z-index: 1;
   &:hover {
-    background: ${props =>
-    props.turn === 'white'
+    background: ${(props) =>
+      props.turn === "W"
         ? "radial-gradient(circle at 30% 30%, white, #868484)"
         : "radial-gradient(circle at 30% 30%, #5f5f5f, #000)"};
   }
   &:active {
     opacity: 1;
-    background: ${props =>
-    props.turn === 'black'
+    background: ${(props) =>
+      props.turn === "B"
         ? "radial-gradient(circle at 30% 30%, white, #868484)"
         : "radial-gradient(circle at 30% 30%, #5f5f5f, #000)"};
   }
@@ -84,7 +84,7 @@ const GomokuElement = styled.div`
   }
 
   ${(props) =>
-    props.turn === "black" &&
+    props.turn === "B" &&
     `
        opacity: 1;
     background: radial-gradient(circle at 30% 30%, #5f5f5f, #000);
@@ -93,7 +93,7 @@ const GomokuElement = styled.div`
   `}
 
   ${(props) =>
-    props.turn === "white" &&
+    props.turn === "W" &&
     `
        opacity: 1;
     background: radial-gradient(circle at 30% 30%, white, #868484);
@@ -119,17 +119,15 @@ const GomokuElement = styled.div`
 `;
 
 const Cell = ({ row, col, value, onClick }) => {
-    const handleClick = useCallback(() => {
-        onClick(row, col, value);
-    }, [row, col, value, onClick]);
+  const handleClick = useCallback(() => {
+    onClick(row, col, value);
+  }, [row, col, value, onClick]);
 
-
-
-    return (
-        <Col $row={row} $col={col} onClick={handleClick} >
-            <GomokuElement turn={value} />
-        </Col>
-    );
+  return (
+    <Col $row={row} $col={col} onClick={handleClick}>
+      <GomokuElement turn={value} />
+    </Col>
+  );
 };
 
 export default memo(Cell);

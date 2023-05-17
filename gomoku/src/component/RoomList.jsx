@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import { getRandomUserId } from "../utils/userId";
 
 const RoomListWrapper = styled.div`
   display: flex;
@@ -43,64 +44,61 @@ const RoomLink = styled(Link)`
   }
 `;
 
-// const RoomList = () => {
-//     // Example room data
-//     const rooms = [
-//         { id: 1, title: 'Room 1', description: 'Description for Room 1' },
-//         { id: 2, title: 'Room 2', description: 'Description for Room 2' },
-//         { id: 3, title: 'Room 3', description: 'Description for Room 3' },
-//     ];
-//
-//     return (
-//         <RoomListWrapper>
-//             {rooms.map((room) => (
-//                 <RoomCard key={room.id}>
-//                     <RoomTitle>{room.title}</RoomTitle>
-//                     <RoomDescription>{room.description}</RoomDescription>
-//                     <RoomLink to={`/room/${room.id}`}>Join Room</RoomLink>
-//                 </RoomCard>
-//             ))}
-//         </RoomListWrapper>
-//     );
-// };
-//
-// export default RoomList;
-
-
 const RoomList = () => {
-    const [rooms, setRooms] = useState([]);
+  const navigate = useNavigate();
+  const [rooms, setRooms] = useState([]);
 
-    const handleCreateRoom = () => {
-        const newRoomId = generateRoomId(); // Generate a unique room ID
-        const newRoom = { roomId: newRoomId, players: [] };
+  useEffect(() => {
+    fetch("http://52.79.86.109:8080/gomoku-room")
+      .then((res) => res.json())
+      .then((data) => {
+        setRooms(data.gomokuRoomList);
+      });
+  }, []);
 
-        setRooms([...rooms, newRoom]);
-    };
+  const handleCreateRoom = async () => {
+    const newRoomId = generateRoomId(); // Generate a unique room ID
+    await fetch("http://52.79.86.109:8080/gomoku-room", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        roomName: String(newRoomId),
+      }),
+    });
+    const newRoom = { roomName: newRoomId };
 
-    const generateRoomId = () => {
-        // Generate a unique room ID using your preferred method
-        // Example: You can use a library like nanoid to generate unique IDs
-        // const newRoomId = nanoid();
+    setRooms((prev) => [...prev, newRoom]);
+    navigate(`/room/${newRoom.roomName}?userId=${getRandomUserId()}&color=W`);
+  };
 
-        // For simplicity, using a random number as the room ID in this example
-        const newRoomId = Math.floor(Math.random() * 100000);
+  const generateRoomId = () => {
+    // Generate a unique room ID using your preferred method
+    // Example: You can use a library like nanoid to generate unique IDs
+    // const newRoomId = nanoid();
 
-        return newRoomId;
-    };
+    // For simplicity, using a random number as the room ID in this example
+    return Math.floor(Math.random() * 100000);
+  };
 
-    return (
-        <div>
-            <h1>Room List</h1>
-            <button onClick={handleCreateRoom}>Create Room</button>
-            <RoomListWrapper>
-                    {rooms.map((room) => (
-                        <RoomCard key={room.roomId}>
-                            <RoomLink to={`/room/${room.roomId}`}>Room {room.roomId}</RoomLink>
-                        </RoomCard>
-                    ))}
-            </RoomListWrapper>
-        </div>
-    );
+  return (
+    <div>
+      <h1>Room List</h1>
+      <button onClick={handleCreateRoom}>Create Room</button>
+      <RoomListWrapper>
+        {rooms.map((room) => (
+          <RoomCard key={room.roomId}>
+            <RoomLink
+              to={`/room/${room.roomName}?userId=${getRandomUserId()}&color=B`}
+            >
+              Room {room.roomName}
+            </RoomLink>
+          </RoomCard>
+        ))}
+      </RoomListWrapper>
+    </div>
+  );
 };
 
 export default RoomList;
