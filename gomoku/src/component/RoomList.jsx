@@ -2,6 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { getRandomUserId } from "../utils/userId";
+import omku from "../images/omku.png";
+
+const StyledRoomList = styled.div`
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
 const RoomListWrapper = styled.div`
   display: flex;
@@ -12,10 +21,11 @@ const RoomCard = styled.div`
   width: 300px;
   padding: 20px;
   margin: 20px;
-  border: 1px solid #ccc;
+  border: 2px solid #ccc;
   border-radius: 8px;
-  background-color: #f5f5f5;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  //color: black;
+  color: ${({ hover }) => (hover ? "white" : "black")};
+  background-color: ${({ hover }) => (hover ? "#000000" : "transparent")};
 `;
 
 const RoomTitle = styled.h2`
@@ -29,24 +39,34 @@ const RoomDescription = styled.p`
   color: #666;
 `;
 
+const CreateRoomButton = styled.button`
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 20px;
+  background-color: #ffffff;
+  border: 2px solid #000000;
+  cursor: pointer;
+  &:hover {
+    background-color: #000000;
+    color: #ffffff;
+  }
+`;
+
 const RoomLink = styled(Link)`
   display: block;
   text-align: center;
   text-decoration: none;
-  color: #fff;
-  background-color: #007bff;
+  //color: #000000;
   padding: 8px 16px;
   border-radius: 4px;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #0056b3;
-  }
+  font-size: 20px;
+  color: ${({ hover }) => (hover ? "white" : "#000000")};
 `;
 
 const RoomList = () => {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   useEffect(() => {
     fetch("http://52.79.86.109:8080/gomoku-room")
@@ -83,13 +103,26 @@ const RoomList = () => {
   };
 
   return (
-    <div>
-      <h1>Room List</h1>
-      <button onClick={handleCreateRoom}>Create Room</button>
+    <StyledRoomList>
+      <h1>오목방 목록</h1>
+      <img
+        src={omku}
+        width="300"
+        height="250"
+        alt="omok"
+        style={{ marginBottom: "10px" }}
+      />
+      <CreateRoomButton onClick={handleCreateRoom}>방 만들기</CreateRoomButton>
       <RoomListWrapper>
-        {rooms.map((room) => (
-          <RoomCard key={room.roomId}>
+        {rooms.map((room, index) => (
+          <RoomCard
+            key={room.roomId}
+            hover={hoveredIndex === index}
+            onMouseEnter={() => setHoveredIndex(index)}
+            onMouseLeave={() => setHoveredIndex(null)}
+          >
             <RoomLink
+              hover={hoveredIndex === index}
               to={`/room/${room.roomName}?userId=${getRandomUserId()}&color=B`}
             >
               Room {room.roomName}
@@ -97,7 +130,7 @@ const RoomList = () => {
           </RoomCard>
         ))}
       </RoomListWrapper>
-    </div>
+    </StyledRoomList>
   );
 };
 

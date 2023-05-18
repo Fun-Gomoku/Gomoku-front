@@ -52,8 +52,9 @@ export default function useBoard() {
   useEffect(() => {
     const sendData = () => {
       if (!stompClient) return;
-      stompClient.send("/subscribe/gomoku-room/1", cellData);
-      // stompClient.send("/publish/stone", cellData);
+      stompClient.send("/subscribe/gomoku-room/1", {
+        ...cellData,
+      });
     };
     sendData();
   }, [stompClient, JSON.stringify(cellData)]);

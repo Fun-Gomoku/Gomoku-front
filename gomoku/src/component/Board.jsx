@@ -45,18 +45,17 @@ const ModalInner = styled.div`
 `;
 
 export default function Board() {
-  const { board, winner, handleGomokuClick, cellData } = useBoard();
-  console.log("cellData", cellData);
+  const { board, winner, handleGomokuClick } = useBoard();
 
   return (
     <div>
       <Title>오목</Title>
-      {winner && (
+      {winner && winner !== "undefined" && (
         <WinnerModal>
           <ModalInner>
             {winner === "draw" && "비김"}
-            {winner === "black" && "흑이 이김"}
-            {winner === "white" && "백이 이김"}
+            {winner === "B" && "흑이 이김"}
+            {winner === "W" && "백이 이김"}
             <br />
             <button onClick={() => window.location.reload()}>
               한번 더 플레이
