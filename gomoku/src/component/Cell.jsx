@@ -54,7 +54,7 @@ const Col = styled.div`
   }
 `;
 
-const GomokuElement = styled.div`
+export const GomokuElement = styled.div`
   width: 90%;
   height: 90%;
   background: transparent;
