@@ -5,7 +5,7 @@ import { getRandomUserId } from "../utils/userId";
 import omku from "../images/omku.png";
 import gomokuStones from "../images/gomokuStones.png";
 import CreateRoomModal from "./CreateRoomModal";
-import { Avatar, Typography } from "@mui/material";
+import { Grid, Avatar, Typography } from "@mui/material";
 
 const StyledRoomList = styled.div`
   padding: 20px;
@@ -14,14 +14,15 @@ const StyledRoomList = styled.div`
   align-items: center;
 `;
 
-const RoomListWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-`;
+// const RoomListWrapper = styled.div`
+//   display: grid;
+//   grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+//   gap: 20px;
+//   justify-items: start;
+// `;
 
 const RoomCard = styled.div`
-  width: 400px;
+  // width: 400px;
   padding: 20px;
   margin: 20px;
   border: 2px solid #ccc;
@@ -34,12 +35,6 @@ const RoomCard = styled.div`
 const RoomTitle = styled.h2`
   //margin: 0 0 10px;
   font-size: 18px;
-`;
-
-const RoomDescription = styled.p`
-  margin: 0 0 20px;
-  font-size: 14px;
-  color: #666;
 `;
 
 const CreateRoomButton = styled.button`
@@ -74,6 +69,15 @@ const RoomList = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isCreateRoomModalOpen, setIsCreateRoomModalOpen] = useState(false);
 
+  // const generateRoomId = () => {
+  //   // Generate a unique room ID using your preferred method
+  //   // Example: You can use a library like nanoid to generate unique IDs
+  //   // const newRoomId = nanoid();
+
+  //   // For simplicity, using a random number as the room ID in this example
+  //   return Math.floor(Math.random() * 100000);
+  // };
+
   useEffect(() => {
     fetch("http://52.79.86.109:8080/gomoku-room")
       .then((res) => res.json())
@@ -101,6 +105,10 @@ const RoomList = () => {
         ]);
         navigate(`/room/${data.roomId}?userId=${getRandomUserId()}&color=W`);
       });
+    // setRooms((prev) => [
+    //   ...prev,
+    //   { roomName: newRoomName, roomId: newRoomName },
+    // ]);
   };
 
   const handleCreateRoom = async () => {
@@ -109,15 +117,6 @@ const RoomList = () => {
     //
     // setRooms((prev) => [...prev, newRoom]);
     // navigate(`/room/${newRoom.roomName}?userId=${getRandomUserId()}&color=W`);
-  };
-
-  const generateRoomId = () => {
-    // Generate a unique room ID using your preferred method
-    // Example: You can use a library like nanoid to generate unique IDs
-    // const newRoomId = nanoid();
-
-    // For simplicity, using a random number as the room ID in this example
-    return Math.floor(Math.random() * 100000);
   };
 
   return (
@@ -134,38 +133,48 @@ const RoomList = () => {
         <CreateRoomButton onClick={handleCreateRoom}>
           방 만들기
         </CreateRoomButton>
-        <RoomListWrapper>
+        <Grid
+          container
+          spacing={2}
+          justifyContent="flex-start"
+          sx={{ px: "100px", py: "20px" }}
+        >
           {rooms.map((room, index) => (
-            <RoomCard
-              key={room.roomId}
-              hover={hoveredIndex === index}
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              <RoomLink
+            <Grid item sm={12} md={6} key={room.roomId}>
+              <RoomCard
                 hover={hoveredIndex === index}
-                to={`/room/${
-                  room.roomName
-                }?userId=${getRandomUserId()}&color=B`}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
               >
-                <div
-                  style={{ display: "flex", gap: "20px", alignItems: "center" }}
+                <RoomLink
+                  hover={hoveredIndex === index}
+                  to={`/room/${
+                    room.roomName
+                  }?userId=${getRandomUserId()}&color=B`}
                 >
-                  <Avatar
-                    src={gomokuStones}
-                    width="30"
-                    height="25"
-                    alt="gomokuStones"
-                  />
-                  <RoomTitle>{room.roomName}</RoomTitle>
-                </div>
-                <div>
-                  <Typography sx={{ color: "red" }}>1/2</Typography>
-                </div>
-              </RoomLink>
-            </RoomCard>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "20px",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Avatar
+                      src={gomokuStones}
+                      width="30"
+                      height="25"
+                      alt="gomokuStones"
+                    />
+                    <RoomTitle>{room.roomName}</RoomTitle>
+                  </div>
+                  <div>
+                    <Typography sx={{ color: "red" }}>1/2</Typography>
+                  </div>
+                </RoomLink>
+              </RoomCard>
+            </Grid>
           ))}
-        </RoomListWrapper>
+        </Grid>
       </StyledRoomList>
       <CreateRoomModal
         open={isCreateRoomModalOpen}
